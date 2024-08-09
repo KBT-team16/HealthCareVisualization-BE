@@ -24,14 +24,14 @@ spring:
             client-id: gX2ITQ6m9ogyZWkW9uuU
             client-secret: J31Vzma4Bx
             authorization-grant-type: authorization_code
-            client-name: ktb-i6
+            client-name: naver
             redirect-uri: http://localhost:8081/login/oauth2/code/naver
             scope: profile,email
           kakao:
             client-id: d388d7c42b1b05b6eb6aea401213977b
             client-secret: f7yAksTCzB4p4OALFLw4IQwfWr4wLaZq
             authorization-grant-type: authorization_code
-            client-name: ktb-i6
+            client-name: kakao
             redirect-uri: http://localhost:8081/login/oauth2/code/kakao
             scope: profile_nickname ,profile_image
 
@@ -44,6 +44,11 @@ spring:
             user-name-attribute: response
           kakao:
             issuer-uri: https://kauth.kakao.com
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            jwk-set-uri: https://kauth.kakao.com/.well-known/jwks.json
+            user-name-attribute: id
 
   mvc:
     static-path-pattern: /static/**

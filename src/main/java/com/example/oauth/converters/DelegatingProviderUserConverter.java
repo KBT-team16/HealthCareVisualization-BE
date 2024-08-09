@@ -17,7 +17,8 @@ public class DelegatingProviderUserConverter implements ProviderUserConverter<Pr
     public DelegatingProviderUserConverter() {
         List<ProviderUserConverter<ProviderUserRequest , ProviderUser>> providerUserConverters =
                 Arrays.asList(
-                        new OAuth2NaverProviderUserConverter()
+                        new OAuth2NaverProviderUserConverter(),
+                        new OAuth2KakaoProviderUserConverter()
                 );
 
         // 불변객체로 생성

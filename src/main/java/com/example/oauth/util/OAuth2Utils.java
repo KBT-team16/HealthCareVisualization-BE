@@ -13,16 +13,19 @@ public class OAuth2Utils {
                 .build();
     }
 
-    public static Attributes getSubAttributes(OAuth2User oAuth2User , String subAttributesKey) {
+    // Naver (response 계층 1개)
+    public static Attributes getSubAttributes(OAuth2User oAuth2User, String subAttributesKey) {
 
-        Map<String , Object> subAttributes = (Map<String, Object>) oAuth2User.getAttributes().get(subAttributesKey);
+        Map<String, Object> subAttributes = (Map<String, Object>) oAuth2User.getAttributes().get(subAttributesKey);
         return Attributes.builder()
                 .subAttributes(subAttributes)
                 .build();
     }
 
-    public static Attributes getOtherAttributes(OAuth2User oAuth2User , String subAttributesKey , String otherAttributesKey) {
-        Map<String , Object> subAttributes = (Map<String, Object>) oAuth2User.getAttributes().get(subAttributesKey);
+    // Kakao (계층 1개 이상)
+    public static Attributes getOtherAttributes(OAuth2User oAuth2User, String subAttributesKey, String otherAttributesKey) {
+
+        Map<String, Object> subAttributes = (Map<String, Object>) oAuth2User.getAttributes().get(subAttributesKey);
         Map<String, Object> otherAttributes = (Map<String, Object>) subAttributes.get(otherAttributesKey);
 
         return Attributes.builder()
@@ -30,4 +33,6 @@ public class OAuth2Utils {
                 .otherAttributes(otherAttributes)
                 .build();
     }
+
+
 }

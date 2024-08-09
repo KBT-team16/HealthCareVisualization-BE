@@ -37,15 +37,19 @@ public class OAuth2ClientConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authRequest -> authRequest
-                .requestMatchers(new AntPathRequestMatcher("/")).permitAll());
-                //.requestMatchers(new AntPathRequestMatcher("/api/user")).hasAnyRole("SCOPE_profile", "SCOPE_email")
-                //.requestMatchers(new AntPathRequestMatcher("/api/oidc")).hasAnyRole("SCOPE_openid"));
+        http.authorizeHttpRequests(authRequest -> authRequest.
+                requestMatchers(new AntPathRequestMatcher("/api/user")).hasAnyRole("OAUTH2_USER").
+                requestMatchers(new AntPathRequestMatcher("/api/oidc")).hasAnyRole("SCOPE_openid").
+                requestMatchers(new AntPathRequestMatcher("/")).permitAll().
+                requestMatchers(new AntPathRequestMatcher("/login")).permitAll());
 
         http.oauth2Login(oauth2Login -> oauth2Login.userInfoEndpoint(
                 userInfo -> userInfo
                         .userService(customOAuth2UserService)
                         .oidcUserService(customOidcUserService)));
+
+        //http.oauth2Login(oauth2Login -> oauth2Login.loginPage("/login"));
+
 
         http.logout(logout -> logout.logoutSuccessUrl("/"));
         return http.build();
