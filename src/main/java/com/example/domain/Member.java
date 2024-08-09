@@ -27,6 +27,4 @@ public class Member {
     private String password;
     private String provider;
     private String email;
-    private List<? extends GrantedAuthority> authorities;
-
 }

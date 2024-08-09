@@ -1,18 +1,28 @@
 package com.example.config;
 
+import com.example.oauth.mapper.CustomAuthorityMapper;
+import com.example.oauth.service.CustomOAuth2UserService;
+import com.example.oauth.service.CustomOidcUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 @Configuration
 public class OAuth2ClientConfig {
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+    @Autowired
+    private CustomOidcUserService customOidcUserService;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -21,11 +31,22 @@ public class OAuth2ClientConfig {
     }
 
     @Bean
+    public GrantedAuthoritiesMapper customAuthorityMapper() {
+        return new CustomAuthorityMapper();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authRequest -> authRequest
                 .requestMatchers(new AntPathRequestMatcher("/")).permitAll());
+                //.requestMatchers(new AntPathRequestMatcher("/api/user")).hasAnyRole("SCOPE_profile", "SCOPE_email")
+                //.requestMatchers(new AntPathRequestMatcher("/api/oidc")).hasAnyRole("SCOPE_openid"));
 
-        http.oauth2Login(Customizer.withDefaults());
+        http.oauth2Login(oauth2Login -> oauth2Login.userInfoEndpoint(
+                userInfo -> userInfo
+                        .userService(customOAuth2UserService)
+                        .oidcUserService(customOidcUserService)));
+
         http.logout(logout -> logout.logoutSuccessUrl("/"));
         return http.build();
     }

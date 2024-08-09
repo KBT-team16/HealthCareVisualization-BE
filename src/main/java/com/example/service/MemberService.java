@@ -20,7 +20,7 @@ public class MemberService {
                 .oauthId(providerUser.getId())
                 .username(providerUser.getUsername())
                 .email(providerUser.getEmail())
-                .authorities(providerUser.getAuthorities())
+                //.authorities(providerUser.getAuthorities())
                 .build();
         memberRepository.save(member);
     }

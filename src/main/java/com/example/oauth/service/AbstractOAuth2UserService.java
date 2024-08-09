@@ -1,6 +1,8 @@
 package com.example.oauth.service;
 
 import com.example.domain.Member;
+import com.example.oauth.converters.ProviderUserConverter;
+import com.example.oauth.converters.ProviderUserRequest;
 import com.example.oauth.model.OAuth2ProviderUser;
 import com.example.oauth.model.ProviderUser;
 import com.example.oauth.model.social.NaverUser;
@@ -21,6 +23,8 @@ public abstract class AbstractOAuth2UserService {
     private MemberRepository memberRepository;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private ProviderUserConverter<ProviderUserRequest , ProviderUser> providerUserConverter;
 
     protected void register(ProviderUser providerUser , OAuth2UserRequest userRequest) {
         Member member = memberRepository.findByUsername(providerUser.getUsername());
@@ -30,15 +34,8 @@ public abstract class AbstractOAuth2UserService {
         }
     }
 
-    public ProviderUser providerUser(ClientRegistration clientRegistration , OAuth2User oAuth2User) {
-        String registrationId = clientRegistration.getRegistrationId();
-
-        if (registrationId.equals("naver")) {
-            return new NaverUser(oAuth2User,clientRegistration);
-        }
-        return null;
+    public ProviderUser providerUser(ProviderUserRequest providerUserRequest) {
+        ProviderUser providerUser = providerUserConverter.converter(providerUserRequest);
+        return providerUser;
     }
-
-
-
 }
