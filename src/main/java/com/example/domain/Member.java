@@ -17,9 +17,7 @@ public class Member {
 
     @Id @GeneratedValue
     private Long id;
-
     private String oauthId;
-
     private String registrationId;
     private String username;
     private String password;

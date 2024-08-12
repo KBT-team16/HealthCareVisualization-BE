@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.example.domain.Authority;
 import com.example.domain.Member;
 import com.example.oauth.model.ProviderUser;
 import com.example.repository.MemberRepository;
