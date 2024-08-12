@@ -1,5 +1,6 @@
 package com.example.config;
 
+import com.example.oauth.handler.CustomSuccessHandler;
 import com.example.oauth.mapper.CustomAuthorityMapper;
 import com.example.oauth.service.CustomOAuth2UserService;
 import com.example.oauth.service.CustomOidcUserService;
@@ -28,6 +29,8 @@ public class OAuth2ClientConfig {
     private CustomOAuth2UserService customOAuth2UserService;
     @Autowired
     private CustomOidcUserService customOidcUserService;
+    @Autowired
+    private CustomSuccessHandler customSuccessHandler;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -84,7 +87,8 @@ public class OAuth2ClientConfig {
         http.oauth2Login(oauth2Login -> oauth2Login.userInfoEndpoint(
                 userInfo -> userInfo
                         .userService(customOAuth2UserService)
-                        .oidcUserService(customOidcUserService)));
+                        .oidcUserService(customOidcUserService))
+                        .successHandler(customSuccessHandler));
 
 
         http.logout(logout -> logout.logoutSuccessUrl("/"));
