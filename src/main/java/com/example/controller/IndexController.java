@@ -1,5 +1,7 @@
 package com.example.controller;
 
+import com.example.oauth.token.CustomAuthenticationToken;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -12,24 +14,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.Map;
 
 @Controller
+@Slf4j
 public class IndexController {
 
     @GetMapping("/")
     public String index(Model model , Authentication authentication ,
                         @AuthenticationPrincipal OAuth2User oAuth2User) {
 
-        OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
+        CustomAuthenticationToken oAuth2AuthenticationToken = (CustomAuthenticationToken) authentication;
 
-        if (oAuth2AuthenticationToken != null) {
-            Map<String, Object> attributes = oAuth2User.getAttributes();
-            String name = (String) attributes.get("name");
+        Object principal = oAuth2AuthenticationToken.getPrincipal();
+        log.info("principal = {} " , principal.getClass());
+        log.info("name = {} " , oAuth2AuthenticationToken.getName());
 
-            if (oAuth2AuthenticationToken.getAuthorizedClientRegistrationId().equals("naver")) {
-                Map<String , Object> response = (Map) attributes.get("response");
-                name = (String) response.get("name");
-            }
-            model.addAttribute("user" , name);
-        }
+
         return "index";
     }
 }

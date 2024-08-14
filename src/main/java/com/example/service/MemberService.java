@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -22,12 +23,15 @@ public class MemberService {
     public void register(String registrationId , ProviderUser providerUser) {
 
         Member member = Member.builder()
-                .registrationId(registrationId)
-                .oauthId(providerUser.getId())
+                .socialPlatform(registrationId)
                 .username(providerUser.getUsername())
                 .email(providerUser.getEmail())
-                //.authorities(providerUser.getAuthorities())
+                .role("ROLE_USER")
                 .build();
+        // Kakao 에서 Email 정보를 알기 위해서는 심사를 통과해야 하기 때문에 Kakao 인 경우는 UUID 로 대체
+        if (registrationId.equals("kakao")) {
+            member.updateEmailForKakao(UUID.randomUUID().toString());
+        }
         memberRepository.save(member);
     }
 }

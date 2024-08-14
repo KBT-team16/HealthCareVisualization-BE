@@ -24,6 +24,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         CustomAuthenticationToken customToken = new CustomAuthenticationToken(oAuth2User, null,oAuth2User.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(customToken);
-        response.sendRedirect("http://localhost:3000/");
+        response.sendRedirect("http://localhost:3001/");
     }
 }
