@@ -36,6 +36,9 @@ public class Member {
     @Embedded
     private NutritionIntake nutritionIntake;
 
+    // 출생년도
+    private int yearOfBirth;
+
     /**
      * OneToOne?
      * OneToMany?

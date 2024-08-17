@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.example.controller.oauth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
