@@ -16,11 +16,33 @@ import java.util.List;
 public class Member {
 
     @Id @GeneratedValue
+    @Column(name = "member_id")
     private Long id;
     private String username;
     private String email;
     private String role;
     private String socialPlatform;
+
+    // 신체 정보들
+    private float height;
+    private float weight;
+    private int age;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+    @Enumerated(EnumType.STRING)
+    private Goal goal;
+    @Embedded
+    private HealthStatus healthStatus;
+    @Embedded
+    private NutritionIntake nutritionIntake;
+
+    /**
+     * OneToOne?
+     * OneToMany?
+     */
+    @OneToOne
+    @JoinColumn(name = "member_id")
+    private ExerciseProgram exerciseProgram;
 
     public void updateEmailForKakao(String uuid) {
         this.email = uuid;
