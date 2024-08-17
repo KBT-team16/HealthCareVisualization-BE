@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,12 +32,14 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Goal goal;
     @Embedded
-    private HealthStatus healthStatus;
-    @Embedded
     private NutritionIntake nutritionIntake;
 
     // 출생년도
     private int yearOfBirth;
+
+    @OneToMany
+    @JoinColumn(name = "member_id")
+    private List<InbodyData> inbodyDatas = new ArrayList<>();
 
     /**
      * OneToOne?

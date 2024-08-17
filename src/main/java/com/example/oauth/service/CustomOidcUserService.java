@@ -1,6 +1,7 @@
 package com.example.oauth.service;
 
 import com.example.oauth.converters.ProviderUserRequest;
+import com.example.oauth.model.PrincipalUser;
 import com.example.oauth.model.ProviderUser;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
@@ -23,6 +24,6 @@ public class CustomOidcUserService extends AbstractOAuth2UserService
         ProviderUserRequest providerUserRequest = new ProviderUserRequest(clientRegistration,oidcUser);
         ProviderUser providerUser = providerUser(providerUserRequest);
         super.register(providerUser,userRequest);
-        return oidcUser;
+        return new PrincipalUser(providerUser);
     }
 }

@@ -1,8 +1,33 @@
 package com.example.controller.response;
 
+import com.example.domain.InbodyData;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 public class InbodyResponseDto {
+
+    @Builder
+    @Getter @NoArgsConstructor @AllArgsConstructor
+    public static class SingleInbodyData {
+        private Long id;
+        private float muscleMass;
+        private float score;
+        private float bmi;
+        private float bodyFatPercentage;
+        private LocalDateTime date;
+
+        public static SingleInbodyData toDto(InbodyData inbodyData) {
+            return SingleInbodyData.builder()
+                    .id(inbodyData.getId())
+                    .bmi(inbodyData.getBmi())
+                    .bodyFatPercentage(inbodyData.getBodyFatPercentage())
+                    .muscleMass(inbodyData.getMuscleMass())
+                    .score(inbodyData.getScore())
+                    .date(inbodyData.getEvaluationDate())
+                    .build();
+        }
+    }
 
     @Builder
     @Getter @NoArgsConstructor @AllArgsConstructor

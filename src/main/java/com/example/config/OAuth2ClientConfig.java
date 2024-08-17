@@ -13,6 +13,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -81,7 +82,7 @@ public class OAuth2ClientConfig {
         http.authorizeHttpRequests(authRequest -> authRequest.
                 requestMatchers(new AntPathRequestMatcher("/api/user")).hasAnyRole("OAUTH2_USER").
                 requestMatchers(new AntPathRequestMatcher("/api/oidc")).hasAnyRole("SCOPE_openid").
-                requestMatchers(new AntPathRequestMatcher("/")).permitAll().
+                requestMatchers(new AntPathRequestMatcher("/**")).permitAll().
                 requestMatchers(new AntPathRequestMatcher("/login")).permitAll());
 
         http.oauth2Login(oauth2Login -> oauth2Login.userInfoEndpoint(
@@ -89,6 +90,10 @@ public class OAuth2ClientConfig {
                         .userService(customOAuth2UserService)
                         .oidcUserService(customOidcUserService))
                         .successHandler(customSuccessHandler));
+        http
+                .sessionManagement((session) -> session
+                        // Session 사용 할 때
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
 
         http.logout(logout -> logout.logoutSuccessUrl("/"));
