@@ -21,7 +21,7 @@ public class ExerciseProgram {
     @Column(name = "exercise_program_name")
     private String name;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     private String description;
