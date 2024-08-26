@@ -1,5 +1,6 @@
 package com.example.domain;
 
+import com.example.controller.request.InbodyDataDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,5 +52,9 @@ public class Member {
 
     public void updateEmailForKakao(String uuid) {
         this.email = uuid;
+    }
+
+    public void updateInbodyData(InbodyData inbodyData) {
+        this.inbodyDatas.add(inbodyData);
     }
 }

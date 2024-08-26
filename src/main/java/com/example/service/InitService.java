@@ -2,7 +2,10 @@ package com.example.service;
 
 import com.example.domain.Category;
 import com.example.domain.ExerciseProgram;
+import com.example.domain.Gender;
+import com.example.domain.Member;
 import com.example.repository.ExerciseProgramRepository;
+import com.example.repository.MemberRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -11,20 +14,23 @@ import org.springframework.stereotype.Service;
 @Component
 @RequiredArgsConstructor
 public class InitService {
-    private final ExerciseProgramInitService exerciseProgramInitService;
+    private final DataInitService dataInitService;
+
 
     @PostConstruct
     public void init() {
-        exerciseProgramInitService.HighInit();
-        exerciseProgramInitService.MiddleInit();
-        exerciseProgramInitService.LowInit();
+        // dataInitService.HighInit();
+        // dataInitService.MiddleInit();
+        // dataInitService.LowInit();
+        dataInitService.memberInit();
     }
 
 
     @Service
     @RequiredArgsConstructor
-    static class ExerciseProgramInitService {
+    static class DataInitService {
         private final ExerciseProgramRepository exerciseProgramRepository;
+        private final MemberRepository memberRepository;
 
         // 고강도
         public void HighInit() {
@@ -95,7 +101,24 @@ public class InitService {
             exerciseProgramRepository.save(ex2);
 
             // 무산소 추가
+        }
 
+        public void memberInit() {
+            Member member1 = Member.builder()
+                    .email("init@")
+                    .username("init")
+                    .gender(Gender.MAN)
+                    .yearOfBirth(2000)
+                    .build();
+            memberRepository.save(member1);
+
+            Member member2 = Member.builder()
+                    .email("init@")
+                    .username("init")
+                    .gender(Gender.MAN)
+                    .yearOfBirth(1970)
+                    .build();
+            memberRepository.save(member2);
         }
 
     }

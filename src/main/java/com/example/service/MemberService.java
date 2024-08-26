@@ -1,5 +1,8 @@
 package com.example.service;
 
+import com.example.controller.request.InbodyDataDto;
+import com.example.controller.response.MemberResponseDto;
+import com.example.domain.InbodyData;
 import com.example.domain.Member;
 import com.example.oauth.model.ProviderUser;
 import com.example.repository.MemberRepository;
@@ -11,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static com.example.controller.response.MemberResponseDto.*;
 
 @Service
 @Slf4j
@@ -18,6 +24,8 @@ public class MemberService {
 
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private InbodyService inbodyService;
 
     @Transactional
     public void register(String registrationId , ProviderUser providerUser) {
@@ -33,5 +41,20 @@ public class MemberService {
             member.updateEmailForKakao(UUID.randomUUID().toString());
         }
         memberRepository.save(member);
+    }
+
+    public List<SingleMember> getMembers() {
+        List<Member> members = memberRepository.findAll();
+        return members.stream().map(SingleMember::of).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public String saveInbodyData(InbodyDataDto inbodyDataDto) {
+        Member member = memberRepository.findById(inbodyDataDto.getMemberId())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 유저 ID"));
+
+        InbodyData inbodyData = inbodyService.saveInbodyData(inbodyDataDto);
+        member.updateInbodyData(inbodyData);
+        return "save success";
     }
 }

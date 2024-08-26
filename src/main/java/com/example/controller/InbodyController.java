@@ -24,7 +24,7 @@ import static com.example.controller.response.InbodyResponseDto.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/inbody")
+// @RequestMapping("/api/inbody")
 public class InbodyController {
 
     private final InbodyService inbodyService;

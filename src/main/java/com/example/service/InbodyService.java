@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.controller.request.InbodyDataDto;
 import com.example.controller.response.InbodyResponseDto;
 import com.example.domain.Gender;
 import com.example.domain.InbodyData;
@@ -11,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +30,17 @@ public class InbodyService {
 
     public SampleData getSampleData() {
         return SampleData.builder().dummy("dummy").build();
+    }
+
+    @Transactional
+    public InbodyData saveInbodyData(InbodyDataDto inbodyDataDto) {
+        InbodyData savedInbodyData = inbodyDataRepository.save(InbodyData.builder()
+                .bodyFatPercentage(Float.parseFloat(inbodyDataDto.getBodyFat()))
+                .score(Float.parseFloat(inbodyDataDto.getInbodyScore()))
+                .muscleMass(Float.parseFloat(inbodyDataDto.getSkeletalMuscleMass()))
+                .evaluationDate(LocalDateTime.now())
+                .build());
+        return savedInbodyData;
     }
 
     public Analyze analyze() {
