@@ -1,6 +1,7 @@
 package com.example.domain;
 
 import com.example.controller.request.InbodyDataDto;
+import com.example.controller.request.MemberRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -56,5 +57,10 @@ public class Member {
 
     public void updateInbodyData(InbodyData inbodyData) {
         this.inbodyDatas.add(inbodyData);
+    }
+
+    public void updateInfo(MemberRequestDto.EditInfo editInfo) {
+        this.height = editInfo.getHeight();
+        this.weight = editInfo.getWeight();
     }
 }

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 public class InbodyData {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "inbody_id")
     private Long id;
     // 체지방률

@@ -12,6 +12,7 @@ public interface ProviderUser {
     String getPassword();
     String getEmail();
     String getProvider();
+    String getBirthYear();
     List<? extends GrantedAuthority> getAuthorities();
     Map<String , Object> getAttributes();
 }

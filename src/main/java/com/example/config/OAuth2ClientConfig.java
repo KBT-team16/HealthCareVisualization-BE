@@ -4,6 +4,9 @@ import com.example.oauth.handler.CustomSuccessHandler;
 import com.example.oauth.mapper.CustomAuthorityMapper;
 import com.example.oauth.service.CustomOAuth2UserService;
 import com.example.oauth.service.CustomOidcUserService;
+import com.example.repository.MemberRepository;
+import com.example.token.JwtFilter;
+import com.example.token.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +18,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @EnableWebSecurity
@@ -32,6 +37,10 @@ public class OAuth2ClientConfig {
     private CustomOidcUserService customOidcUserService;
     @Autowired
     private CustomSuccessHandler customSuccessHandler;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -54,15 +63,14 @@ public class OAuth2ClientConfig {
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 
                         CorsConfiguration configuration = new CorsConfiguration();
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3001")); // 클라이언트의 도메인 설정
+                        configuration.setAllowedMethods(Collections.singletonList("*")); // 모든 HTTP 메서드를 허용
+                        configuration.setAllowCredentials(true); // 자격 증명을 허용
+                        configuration.setAllowedHeaders(Collections.singletonList("*")); // 모든 헤더를 허용
+                        configuration.setMaxAge(3600L); // 캐시 지속 시간 설정
 
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3001"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-
-                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+                        // 여기서 두 개의 헤더를 노출하도록 설정
+                        configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization")); // 노출할 헤더 설정
 
                         return configuration;
                     }
@@ -85,6 +93,9 @@ public class OAuth2ClientConfig {
                 requestMatchers(new AntPathRequestMatcher("/**")).permitAll().
                 requestMatchers(new AntPathRequestMatcher("/login")).permitAll());
 
+        http
+                .addFilterBefore(new JwtFilter(jwtService,memberRepository), OAuth2LoginAuthenticationFilter.class);
+
         http.oauth2Login(oauth2Login -> oauth2Login.userInfoEndpoint(
                 userInfo -> userInfo
                         .userService(customOAuth2UserService)
@@ -92,8 +103,7 @@ public class OAuth2ClientConfig {
                         .successHandler(customSuccessHandler));
         http
                 .sessionManagement((session) -> session
-                        // Session 사용 할 때
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 
         http.logout(logout -> logout.logoutSuccessUrl("/"));

@@ -36,6 +36,11 @@ public abstract class OAuth2ProviderUser implements ProviderUser{
     }
 
     @Override
+    public String getBirthYear() {
+        return (String) getAttributes().get("birthyear");
+    }
+
+    @Override
     public String getProvider() {
         return clientRegistration.getRegistrationId();
     }
