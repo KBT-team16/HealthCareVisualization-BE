@@ -44,33 +44,27 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 중간에 공백으로 구분
 
         String email = (String) oAuth2User.getAttribute("email");
+        System.out.println("CustomSuccessHandler.onAuthenticationSuccess");
+        System.out.println("email = " + email);
         Member member = memberRepository.findByEmail(email);
 
-        if (member != null) {
-            CustomAuthenticationToken customToken = new CustomAuthenticationToken(oAuth2User, null,oAuth2User.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(customToken);
 
-            TokenMapping token = jwtService.createToken(email);
+        CustomAuthenticationToken customToken = new CustomAuthenticationToken(oAuth2User, null, oAuth2User.getAuthorities());
 
-            response.setStatus(HttpStatus.OK.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        SecurityContextHolder.getContext().setAuthentication(customToken);
 
+        TokenMapping token = jwtService.createToken(email);
 
-            response.setStatus(HttpStatus.OK.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpStatus.OK.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-            // 액세스 토큰을 Authorization 헤더에 추가
-
-            // Refresh 토큰을 쿠키에 추가
-            response.addCookie(createCookie("AuthorizationAccess", token.getAccessToken()));
-            response.addCookie(createCookie("AuthorizationRefresh", token.getRefreshToken()));
-
-            // 클라이언트를 mainPage로 리다이렉트
-            response.sendRedirect("http://localhost:3001");
-        } else {
-            response.sendRedirect("http://localhost:3001");
-        }
-
+        // 액세스 토큰을 Authorization 헤더에 추가
+        // Refresh 토큰을 쿠키에 추가
+        response.addCookie(createCookie("AuthorizationAccess", token.getAccessToken()));
+        LoginDto loginDto = LoginDto.from(email, token);
+        response.sendRedirect("http://localhost:3001/mainpage_login");
+        om.writeValue(response.getWriter(),loginDto);
+        super.onAuthenticationSuccess(request,response,authentication);
     }
 
     // refreshToken 을 보낼때는 Cookie 사용

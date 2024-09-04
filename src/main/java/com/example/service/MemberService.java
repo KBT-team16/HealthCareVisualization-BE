@@ -71,10 +71,18 @@ public class MemberService {
         return "save success";
     }
 
-    public EditInfo getMemberInfo(HttpServletRequest request) {
-        Member member = findMemberFromAccessToken(request);
+    public EditInfo getMemberInfo(String token) {
+        String email = jwtService.extractMemberEmail(token);
+        log.info("token = {} " , token);
+        log.info("email = {} " , email);
+        Member member = memberRepository.findByUsername(email);
         return EditInfo.from(member.getHeight(),member.getWeight());
     }
+
+    /*public EditInfo getMemberInfo(HttpServletRequest request) {
+        Member member = findMemberFromAccessToken(request);
+        return EditInfo.from(member.getHeight(),member.getWeight());
+    }*/
 
     @Transactional
     public String editMemberInfo(MemberRequestDto.EditInfo editInfo , HttpServletRequest request) {
@@ -90,12 +98,13 @@ public class MemberService {
     }
 
     private Member findMemberFromAccessToken(HttpServletRequest request) {
+        String header = request.getHeader("authorization");
+        log.info("header = {} " , header);
         String accessToken = jwtService.extractAccessToken(request)
                 .orElseThrow(() -> new RuntimeException("토큰이 유효하지 않습니다."));
         String email = jwtService.extractMemberEmail(accessToken);
-        return memberRepository.findByEmail(email);
+        String token = jwtService.extractAccessToken(request).get();
+        return memberRepository.findByUsername(email);
+        // return memberRepository.findByEmail(email);
     }
-
-
-
 }

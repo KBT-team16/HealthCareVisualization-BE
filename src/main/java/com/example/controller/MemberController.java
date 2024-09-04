@@ -40,14 +40,13 @@ public class MemberController {
     //회원 정보 수정 (JWT 가 제대로 동작한다고 가정)
     @GetMapping("/member/info")
     public ResponseEntity<EditInfo> getMemberInfo(HttpServletRequest request) {
-        log.info("@GetMapping(\"/member/info\") 호출");
-        return ResponseEntity.ok().body(memberService.getMemberInfo(request));
+        String token = request.getHeader("authorization");
+        return ResponseEntity.ok().body(memberService.getMemberInfo(token));
     }
 
     @PatchMapping("/member/info")
     public ResponseEntity<String> editMemberInfo(@RequestBody MemberRequestDto.EditInfo editInfo ,
                                                    HttpServletRequest request) {
-        log.info("@PatchMapping(\"/member/info\") 호출");
         return ResponseEntity.ok().body(memberService.editMemberInfo(editInfo , request));
     }
 

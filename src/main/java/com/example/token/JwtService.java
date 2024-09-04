@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Optional;
 
 @Service
@@ -48,6 +50,7 @@ public class JwtService {
      */
 
     public String createAccessToken(String subject) {
+        log.info("createAccessToken.subject = {} " , subject);
         return JWT.create()
                 .withSubject("AccessToken")
                 .withExpiresAt(new Date(System.currentTimeMillis()+accessTokenValidationSeconds))
@@ -78,10 +81,17 @@ public class JwtService {
      * 헤더에서 토큰 추출
      */
     public Optional<String> extractAccessToken(HttpServletRequest request) {
+        Enumeration<String> headerNames = request.getHeaderNames();
+        Iterator<String> iterator = headerNames.asIterator();
+        while (iterator.hasNext()) {
+            String s = iterator.next();
+            log.info("s = {} " , s);
+        }
+
+
         Optional<String> token = Optional.ofNullable(request.getHeader(accessHeader))
                 .filter(accessToken -> accessToken.startsWith(PREFIX))
                 .map(accessToken -> accessToken.replace(PREFIX, BLANK));
-
         return Optional.ofNullable(request.getHeader(accessHeader))
                 .filter(accessToken -> accessToken.startsWith(PREFIX))
                 .map(accessToken -> accessToken.replace(PREFIX , BLANK));
@@ -107,6 +117,8 @@ public class JwtService {
                 .getClaim("subject")
                 .asString();
     }
+
+
 
     /**
      * 토큰 유효성 검사

@@ -26,6 +26,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @EnableWebSecurity
 @Configuration
@@ -56,25 +57,33 @@ public class OAuth2ClientConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+
+        //CORS 설정
         http
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
 
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        System.out.println("OAuth2ClientConfig.getCorsConfiguration");
 
                         CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3001")); // 클라이언트의 도메인 설정
-                        configuration.setAllowedMethods(Collections.singletonList("*")); // 모든 HTTP 메서드를 허용
-                        configuration.setAllowCredentials(true); // 자격 증명을 허용
-                        configuration.setAllowedHeaders(Collections.singletonList("*")); // 모든 헤더를 허용
-                        configuration.setMaxAge(3600L); // 캐시 지속 시간 설정
 
-                        // 여기서 두 개의 헤더를 노출하도록 설정
-                        configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization")); // 노출할 헤더 설정
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3001"));
+                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        configuration.setAllowCredentials(true);
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setMaxAge(3600L);
+
+                        configuration.setExposedHeaders(Collections.singletonList("Set-" +
+                                "Cookie"));
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                        // configuration.setAllowedOrigins(List.of("Access-Control-Allow-Origin"));
 
                         return configuration;
                     }
                 }));
+
         //csrf disable
         http
                 .csrf((auth) -> auth.disable());
